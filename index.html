@@ -40,6 +40,8 @@ and open the template in the editor.
         </div>
         </nav>
         <form id="indicators">
+            
+            <button type="submit" class="btn btn-default">Envoyer</button>
         </form>
 
         <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -49,7 +51,9 @@ and open the template in the editor.
           Parse.initialize("O8dECYavaIBZwi34qBZnIkvwAQEWVXjAiHwOGbKb", "2Vmb5IdO9TgrBA4FVh2eovsNmPy2JpqW72H8Rlzi");
 
           $(document).ready(function() {
-            Indicateur = Parse.Object.extend("Indicateur")
+            var Indicateur = Parse.Object.extend("Indicateur");
+            var NoteSaisie = Parse.Object.extend("NoteSaisie")
+                
 
             allIndicators = new Parse.Query(Indicateur);
             allIndicators.include("objectifPrincipal");
@@ -70,13 +74,46 @@ and open the template in the editor.
                   if($('#'+idObjP).length == 0) {
                     $('#indicators #'+idObjG).append("<div id='"+idObjP+"'><h2>"+objectifPrincipal.get('label')+"</h2></div>");
                   }
-                  $('#indicators #'+idObjP).append("<p id='"+idInd+"'>"+indicateur.get('label')+"</p>");
+                  $('#indicators #'+idObjP).append(
+                          "<p id='"+idInd+"'>"+indicateur.get('label')+"</p>"+
+                          "<select class='form-control' name='"+idInd+"'>"+
+                          "<option>1</option>"+
+                          "<option>2</option>"+
+                          "<option>3</option>"+
+                          "<option>4</option>"+
+                          "<option>5</option>"+
+                          "<option>6</option>"+
+                          "</select>"    
+                          );
                 }
               },
               error: function (error) {
                 console.log(error);
               }
             });
+            
+            $("#indicators").submit(function(e){
+                e.preventDefault();
+            
+                var notes = $.map($("select"),function(select) {
+                    var id = select.name.substr(4);
+                    var note = select.value;
+                    return {
+                        indicateur: new Indicateur({ id: id }),
+                        note: note
+                    };
+                })
+                console.log(notes);
+                var noteSaisies = new NoteSaisie();
+                noteSaisies.set('notes', notes );
+                noteSaisies.save(null, {
+                    success: function () {
+                        console.log("C'est sauvegardé avec succès !");
+                    }
+                });
+            }); 
+            
+            
           })
         </script>
     </body>
