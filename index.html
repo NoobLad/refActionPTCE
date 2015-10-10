@@ -53,12 +53,24 @@ and open the template in the editor.
 
             allIndicators = new Parse.Query(Indicateur);
             allIndicators.include("objectifPrincipal");
+            allIndicators.include("objectifPrincipal.objectifGeneral");
             allIndicators.find({
               success: function (results) {
                 console.log(results);
                 for(var i = 0; i < results.length; i++) {
                   var indicateur = results[i];
-                  $('#indicators').append(indicateur.get('label'));
+                  var objectifPrincipal = indicateur.get('objectifPrincipal');
+                  var objectifGeneral = objectifPrincipal.get('objectifGeneral');
+                  var idObjP = "objP-"+objectifPrincipal.id;
+                  var idObjG = "objG-"+objectifGeneral.id;
+                  var idInd = "ind-" + indicateur.id;
+                  if ($('#'+idObjG).length == 0) {
+                    $('#indicators').append("<div id='"+idObjG+"'><h1>"+objectifGeneral.get('label')+"</h1></div>");
+                  }
+                  if($('#'+idObjP).length == 0) {
+                    $('#indicators #'+idObjG).append("<div id='"+idObjP+"'><h2>"+objectifPrincipal.get('label')+"</h2></div>");
+                  }
+                  $('#indicators #'+idObjP).append("<p id='"+idInd+"'>"+indicateur.get('label')+"</p>");
                 }
               },
               error: function (error) {
