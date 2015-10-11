@@ -8,6 +8,8 @@ function getParameterByName(name) {
     
 $(document).ready(function () {
     
+    var emailMatcher = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
     //bouton ajouter
     var $bAjouter = $("#ajouter");
     var $fadresses = $("#adresses");
@@ -19,22 +21,28 @@ $(document).ready(function () {
     
     //ajout des nouveaux champs
     $bAjouter.click(function(){
-        var unParticipant = new Participant();
         
-        unParticipant.set('group', new Group({id :getParameterByName("groupId")}));
-        unParticipant.set('mail', $('#mail').val());
-        unParticipant.save(null, {
-            success: function () {
-               console.log("C'est sauvegardé avec succès !");
-          }
-        });
+        if(emailMatcher.test($('#mail').val())){
+            var unParticipant = new Participant();
+
+            unParticipant.set('group', new Group({id :getParameterByName("groupId")}));
+            unParticipant.set('mail', $('#mail').val());
+            unParticipant.save(null, {
+                success: function () {
+                   console.log("C'est sauvegardé avec succès !");
+              }
+            }); 
         
-        $Inscriptions.append("<p><strong>"+$('#mail').val()+"</strong></p>");
+            $Inscriptions.append("<p><strong>"+$('#mail').val()+"</strong></p>");
+            $('#mail').val("");
+            
+            $("#invalid-email").hide();
+        
+        } else {
+           $("#invalid-email").show(); 
+        }
+        
+        
     });
-    
-
-    
-   
-
 });
-
+   
