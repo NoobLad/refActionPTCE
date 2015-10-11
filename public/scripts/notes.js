@@ -82,7 +82,7 @@ $(document).ready(function () {
                 var indicateur = results[i];
                 var objectifPrincipal = indicateur.get('objectifPrincipal');
                 var objectifGeneral = objectifPrincipal.get('objectifGeneral');
-                var html = "<section>"+
+                var html = "<section style='padding: 16px;'>"+
                     "<header>"+objectifGeneral.get('label')+"</header>"+
                     "<div class='content'>"+
                     "<h2>"+objectifPrincipal.get('label')+"</h2>"+
@@ -98,7 +98,7 @@ $(document).ready(function () {
                 domElement.find('.badge').click(noteSelect(indicateur.id));
                 $formContainer.append(domElement);
             }
-            $formContainer.find('section').width(width);
+            $formContainer.find('section').width(width-32);
             footer.show();
             actualizeButtons();
         },
