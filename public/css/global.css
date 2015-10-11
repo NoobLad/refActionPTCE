@@ -30,6 +30,9 @@ html, body {
     left: 0;
     right: 0;
 }
+#indicators #finish {
+    margin-left: 30px;
+}
 .indicators-container section {
     float: left;
     height: 100%;

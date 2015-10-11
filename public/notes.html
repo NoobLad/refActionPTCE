@@ -14,7 +14,7 @@ and open the template in the editor.
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="./css/global.css">
 </head>
-<body class="container">
+<body class="">
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -52,9 +52,13 @@ and open the template in the editor.
         </section>
     </div>
     <footer class="clearfix">
-        <button type="button" class="btn btn-default pull-left" id="previous">Question précédente</button>
+        <button type="button" class="btn btn-default pull-left" id="previous">
+            < <span class="hidden-xs hidden-sm">Question précédente</span>
+        </button>
+        <button type="button" class="btn btn-default pull-right" id="next">
+            > <span class="hidden-xs hidden-sm">Question suivante</span>
+        </button>
         <button type="submit" class="btn btn-default pull-right" id="finish">Envoyer</button>
-        <button type="button" class="btn btn-default pull-right" id="next">Question suivante</button>
     </footer>
 </form>
 
