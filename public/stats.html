@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+    <title>PTCE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="./css/global.css">
+</head>
+<body class="">
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
+                <span class="sr-only">Ouvrir le menu</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Référentiel d'action PTCE</a>
+        </div>
+
+
+        <div class="collapse navbar-collapse navbar-right" id="navbar">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Lines <span class="sr-only">(Actuel)</span></a></li>
+                <li><a href="#">Liens</a></li>
+                <li class="dropdown">
+                    <a href="#">Liens</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div>
+    <canvas id="mainRadar" style="width: 100%; height: 400px;"></canvas>
+    <canvas id="indicatorsBar" style="width: 100%; height: 400px;"></canvas>
+</div>
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="https://www.parsecdn.com/js/parse-1.6.5.min.js"></script>
+<script>
+    Parse.initialize("O8dECYavaIBZwi34qBZnIkvwAQEWVXjAiHwOGbKb", "2Vmb5IdO9TgrBA4FVh2eovsNmPy2JpqW72H8Rlzi");
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+    function add(a, b) {
+        return a+b;
+    }
+
+    function getCanvas(id) {
+        return document.getElementById(id).getContext('2d');
+    }
+
+    $(document).ready(function () {
+        var Indicateur = Parse.Object.extend('Indicateur');
+
+
+        var allIndicators = new Parse.Query(Indicateur);
+        allIndicators.include("objectifPrincipal");
+        allIndicators.include("objectifPrincipal.objectifGeneral");
+        allIndicators.find({
+            success: function( indicators) {
+                var indById = {};
+                indicators.forEach(function (ind) {
+                    indById[ind.id] = ind;
+                });
+                indicatorsLoaded(indById);
+            }
+        });
+        function indicatorsLoaded(indicatorsById) {
+
+            var groupId = getParameterByName("groupId");
+            console.log(groupId);
+            var NoteSaisies = Parse.Object.extend("NoteSaisie");
+            var Group = Parse.Object.extend("Group");
+            var query = new Parse.Query(NoteSaisies);
+            query.include('notes');
+            var group = new Group();
+            group.id = groupId;
+            query.equalTo("group", group);
+            query.find({
+                success: function(results) {
+                    console.log(results);
+                    var main = {};
+                    var indicators = {};
+                    results.forEach(function (noteSasie) {
+                        noteSasie.get('notes').forEach(function (note) {
+                            var indicateur = indicatorsById[note.indicateur.id];
+                            var objectifPrincipal = indicateur.get('objectifPrincipal');
+                            var idPrincipal = objectifPrincipal.id;
+                            var indicatorId = indicateur.id;
+                            var eval = note.note;
+                            main[idPrincipal] = main[idPrincipal] || { label: objectifPrincipal.get('label'), values:[]};
+                            main[idPrincipal].values.push(eval);
+                            indicators[indicatorId] = indicators[indicatorId] || { label: indicateur.get('key'), values:[]};
+                            indicators[indicatorId].values.push(eval);
+                        });
+                    });
+                    var mainLabel = [];
+                    var mainStats = [];
+                    Object.keys(main).forEach(function(key) {
+                        var objValues = main[key];
+                        mainLabel.push(objValues.label);
+                        mainStats.push(objValues.values.reduce(add ,0) / objValues.values.length);
+                    });
+
+                    var indicatorsLabel = [];
+                    var indicatorsAverage = [];
+                    var indicatorsEcartType = [];
+
+                    Object.keys(indicators).forEach(function(key) {
+                        var objValues = indicators[key];
+                        indicatorsLabel.push(objValues.label);
+                        var average = objValues.values.reduce(add, 0) / objValues.values.length;
+                        indicatorsAverage.push(average);
+                        var ecart = objValues.values.reduce(function(acc, value, i) {
+                            var val = (value - average) * (value - average);
+                            return acc + val;
+                        });
+                        indicatorsEcartType.push(Math.sqrt(ecart / objValues.values.length));
+                    });
+                    new Chart(getCanvas('mainRadar')).Radar({
+                        labels: mainLabel,
+                        datasets: [
+                            {
+                                label: "Objectifs Principaux",
+                                fillColor: "rgba(220,220,220,0.2)",
+                                strokeColor: "rgba(220,220,220,1)",
+                                pointColor: "rgba(220,220,220,1)",
+                                pointStrokeColor: "#fff",
+                                pointHighlightFill: "#fff",
+                                pointHighlightStroke: "rgba(220,220,220,1)",
+                                data: mainStats
+                            }
+                        ]
+                    });
+
+                    new Chart(getCanvas('indicatorsBar')).Bar({
+                        labels: indicatorsLabel,
+                        datasets: [
+                            {
+                                label: "Moyenne",
+                                fillColor: "rgba(220,220,220,0.5)",
+                                strokeColor: "rgba(220,220,220,0.8)",
+                                highlightFill: "rgba(220,220,220,0.75)",
+                                highlightStroke: "rgba(220,220,220,1)",
+                                data: indicatorsAverage
+                            },
+                            {
+                                label: "Ecart Type",
+                                fillColor: "rgba(151,187,205,0.5)",
+                                strokeColor: "rgba(151,187,205,0.8)",
+                                highlightFill: "rgba(151,187,205,0.75)",
+                                highlightStroke: "rgba(151,187,205,1)",
+                                data: indicatorsEcartType
+                            }
+                        ]
+                    });
+
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>
