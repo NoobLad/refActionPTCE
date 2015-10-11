@@ -5,116 +5,113 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <html>
-    <head>
-        <title>PTCE</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+    <title>PTCE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 
-    </head>
-    <body class="container">
-      <nav class="navbar navbar-default">
-        <div class="container-fluid">
-          <div class="navbar-header">
+</head>
+<body class="container">
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-              <span class="sr-only">Ouvrir le menu</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
+                <span class="sr-only">Ouvrir le menu</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="#">Référentiel d'action PTCE</a>
-          </div>
-
-
-          <div class="collapse navbar-collapse navbar-right" id="navbar">
-            <ul class="nav navbar-nav">
-              <li class="active"><a href="#">Lines <span class="sr-only">(Actuel)</span></a></li>
-              <li><a href="#">Liens</a></li>
-              <li class="dropdown">
-                <a href="#">Liens</a>
-              </li>
-            </ul>
-          </div>
         </div>
-        </nav>
-        <form id="indicators">
-            
-            <button type="submit" class="btn btn-default">Envoyer</button>
-        </form>
 
-        <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <script src="https://www.parsecdn.com/js/parse-1.6.5.min.js"></script>
-        <script>
-          Parse.initialize("O8dECYavaIBZwi34qBZnIkvwAQEWVXjAiHwOGbKb", "2Vmb5IdO9TgrBA4FVh2eovsNmPy2JpqW72H8Rlzi");
 
-          $(document).ready(function() {
-            var Indicateur = Parse.Object.extend("Indicateur");
-            var NoteSaisie = Parse.Object.extend("NoteSaisie")
-                
+        <div class="collapse navbar-collapse navbar-right" id="navbar">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Lines <span class="sr-only">(Actuel)</span></a></li>
+                <li><a href="#">Liens</a></li>
+                <li class="dropdown">
+                    <a href="#">Liens</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<form id="indicators">
 
-            allIndicators = new Parse.Query(Indicateur);
-            allIndicators.include("objectifPrincipal");
-            allIndicators.include("objectifPrincipal.objectifGeneral");
-            allIndicators.find({
-              success: function (results) {
+    <button type="submit" class="btn btn-default">Envoyer</button>
+</form>
+
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="https://www.parsecdn.com/js/parse-1.6.5.min.js"></script>
+<script>
+    Parse.initialize("O8dECYavaIBZwi34qBZnIkvwAQEWVXjAiHwOGbKb", "2Vmb5IdO9TgrBA4FVh2eovsNmPy2JpqW72H8Rlzi");
+
+    $(document).ready(function () {
+        var Indicateur = Parse.Object.extend("Indicateur");
+        var NoteSaisie = Parse.Object.extend("NoteSaisie");
+
+        var allIndicators = new Parse.Query(Indicateur);
+        allIndicators.include("objectifPrincipal");
+        allIndicators.include("objectifPrincipal.objectifGeneral");
+        allIndicators.find({
+            success: function (results) {
                 console.log(results);
-                for(var i = 0; i < results.length; i++) {
-                  var indicateur = results[i];
-                  var objectifPrincipal = indicateur.get('objectifPrincipal');
-                  var objectifGeneral = objectifPrincipal.get('objectifGeneral');
-                  var idObjP = "objP-"+objectifPrincipal.id;
-                  var idObjG = "objG-"+objectifGeneral.id;
-                  var idInd = "ind-" + indicateur.id;
-                  if ($('#'+idObjG).length == 0) {
-                    $('#indicators').append("<div id='"+idObjG+"'><h1>"+objectifGeneral.get('label')+"</h1></div>");
-                  }
-                  if($('#'+idObjP).length == 0) {
-                    $('#indicators #'+idObjG).append("<div id='"+idObjP+"'><h2>"+objectifPrincipal.get('label')+"</h2></div>");
-                  }
-                  $('#indicators #'+idObjP).append(
-                          "<p id='"+idInd+"'>"+indicateur.get('label')+"</p>"+
-                          "<select class='form-control' name='"+idInd+"'>"+
-                          "<option>1</option>"+
-                          "<option>2</option>"+
-                          "<option>3</option>"+
-                          "<option>4</option>"+
-                          "<option>5</option>"+
-                          "<option>6</option>"+
-                          "</select>"    
-                          );
-                }
-              },
-              error: function (error) {
-                console.log(error);
-              }
-            });
-            
-            $("#indicators").submit(function(e){
-                e.preventDefault();
-            
-                var notes = $.map($("select"),function(select) {
-                    var id = select.name.substr(4);
-                    var note = select.value;
-                    return {
-                        indicateur: new Indicateur({ id: id }),
-                        note: note
-                    };
-                })
-                console.log(notes);
-                var noteSaisies = new NoteSaisie();
-                noteSaisies.set('notes', notes );
-                noteSaisies.save(null, {
-                    success: function () {
-                        console.log("C'est sauvegardé avec succès !");
+                for (var i = 0; i < results.length; i++) {
+                    var indicateur = results[i];
+                    var objectifPrincipal = indicateur.get('objectifPrincipal');
+                    var objectifGeneral = objectifPrincipal.get('objectifGeneral');
+                    var idObjP = "objP-" + objectifPrincipal.id;
+                    var idObjG = "objG-" + objectifGeneral.id;
+                    var idInd = "ind-" + indicateur.id;
+                    if ($('#' + idObjG).length == 0) {
+                        $('#indicators').append("<div id='" + idObjG + "'><h1>" + objectifGeneral.get('label') + "</h1></div>");
                     }
-                });
-            }); 
-            
-            
-          })
-        </script>
-    </body>
+                    if ($('#' + idObjP).length == 0) {
+                        $('#indicators #' + idObjG).append("<div id='" + idObjP + "'><h2>" + objectifPrincipal.get('label') + "</h2></div>");
+                    }
+                    $('#indicators #' + idObjP).append(
+                            "<p id='" + idInd + "'>" + indicateur.get('label') + "</p>" +
+                            "<select class='form-control' name='" + idInd + "'>" +
+                            "<option>1</option>" +
+                            "<option>2</option>" +
+                            "<option>3</option>" +
+                            "<option>4</option>" +
+                            "<option>5</option>" +
+                            "<option>6</option>" +
+                            "</select>"
+                    );
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+
+        $("#indicators").submit(function (e) {
+            e.preventDefault();
+
+            var notes = $.map($("select"), function (select) {
+                var id = select.name.substr(4);
+                var note = select.value;
+                return {
+                    indicateur: new Indicateur({id: id}),
+                    note: note
+                };
+            });
+            console.log(notes);
+            var noteSaisies = new NoteSaisie();
+            noteSaisies.set('notes', notes);
+            noteSaisies.save(null, {
+                success: function () {
+                    console.log("C'est sauvegardé avec succès !");
+                }
+            });
+        });
+    });
+</script>
+</body>
 </html>
