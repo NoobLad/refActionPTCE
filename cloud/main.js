@@ -25,14 +25,14 @@ Parse.Cloud.afterSave("Group", function (request) {
         }
     });
 });
-Parse.Cloud.afterSave("Particpant", function (request) {
+Parse.Cloud.afterSave("Participant", function (request) {
     var participant = request.object;
     Mailgun.sendEmail({
         to: participant.get('mail'),
         from: "no-reply@cresol.fr",
         subject: "Accès au questionnaire du référentiel d'action PTCE",
         text: "Voici les accés : "+
-                "http://dev-cresol-ref.parseapp.com/notes.html?groupId="+ participant.group.id
+                "http://dev-cresol-ref.parseapp.com/notes.html?groupId="+ participant.get('group').id
     }, {
         success: function (httpResponse) {
             console.log(httpResponse);

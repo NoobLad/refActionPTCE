@@ -16,6 +16,7 @@ html, body {
 }
 #indicators .badge {
     margin-right: 20px;
+    cursor: pointer;
 }
 .indicators-container {
     position: absolute;
