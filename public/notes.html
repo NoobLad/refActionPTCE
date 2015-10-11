@@ -36,9 +36,16 @@ and open the template in the editor.
     </div>
 </nav>
 
+
+    <div id="wait" class="alert">
+        Chargement du questionnaire en cours.
+    </div>
     <form id="indicators">
+        <div id="form-issue" class="alert alert-info" style="display: none;">
+            Une erreur est survenue veuillez réssayer plus tard.
+        </div>
         <div class="indicators-container clearfix">
-            <section style="padding: 16px;">
+            <section style="padding: 16px; display: none">
                 <header>Qui êtes-vous ?</header>
                 <div class="content">
                     <div class="form-group">
@@ -48,7 +55,7 @@ and open the template in the editor.
                 </div>
             </section>
         </div>
-        <footer class="clearfix" style="">
+        <footer class="clearfix">
             <button type="button" class="btn btn-default pull-left" id="previous" style="margin-left: 16px;">
                &lt; <span class="hidden-xs hidden-sm">Question précédente</span>
             </button>
