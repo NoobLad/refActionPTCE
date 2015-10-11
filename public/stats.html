@@ -40,8 +40,11 @@ and open the template in the editor.
     </div>
 </nav>
 <div>
+    <h1>Résultats statistiques</h1>
     <canvas id="mainRadar" style="width: 100%; height: 400px;"></canvas>
+    <div id="mainLegend"></div>
     <canvas id="indicatorsBar" style="width: 100%; height: 400px;"></canvas>
+    <div id="indicatorsLegend"></div>
 </div>
 <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
@@ -102,7 +105,8 @@ and open the template in the editor.
                             var idPrincipal = objectifPrincipal.id;
                             var indicatorId = indicateur.id;
                             var eval = note.note;
-                            main[idPrincipal] = main[idPrincipal] || { label: objectifPrincipal.get('label'), values:[]};
+                            var label = objectifPrincipal.get('label').split(' ').splice(0, 5).join(' ');
+                            main[idPrincipal] = main[idPrincipal] || { label: label, values:[]};
                             main[idPrincipal].values.push(eval);
                             indicators[indicatorId] = indicators[indicatorId] || { label: indicateur.get('key'), values:[]};
                             indicators[indicatorId].values.push(eval);
@@ -130,6 +134,7 @@ and open the template in the editor.
                             return acc + val;
                         });
                         indicatorsEcartType.push(Math.sqrt(ecart / objValues.values.length));
+
                     });
                     new Chart(getCanvas('mainRadar')).Radar({
                         labels: mainLabel,
