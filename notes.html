@@ -59,7 +59,6 @@ and open the template in the editor.
         allIndicators.include("objectifPrincipal.objectifGeneral");
         allIndicators.find({
             success: function (results) {
-                console.log(results);
                 for (var i = 0; i < results.length; i++) {
                     var indicateur = results[i];
                     var objectifPrincipal = indicateur.get('objectifPrincipal');
@@ -102,7 +101,6 @@ and open the template in the editor.
                     note: note
                 };
             });
-            console.log(notes);
             var noteSaisies = new NoteSaisie();
             noteSaisies.set('notes', notes);
             noteSaisies.save(null, {
