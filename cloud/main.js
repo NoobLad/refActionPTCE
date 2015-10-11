@@ -14,7 +14,8 @@ Parse.Cloud.afterSave("Group", function (request) {
         to: group.get('mail'),
         from: "no-reply@cresol.fr",
         subject: "Accès au groupe créé",
-        text: "Voici les accés."
+        text: "Voici les accés."+
+                "http://dev-cresol-ref.parseapp.com/gestion.html?groupId="+ group.id
     }, {
         success: function (httpResponse) {
             console.log(httpResponse);
