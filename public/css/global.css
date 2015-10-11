@@ -1,0 +1,41 @@
+html, body {
+    height: 100%;
+    width: 100%;
+}
+#indicators {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: calc(100% - 70px);
+}
+#indicators footer {
+    display: none;
+}
+#indicators .badge.selected {
+    background-color: green;
+}
+#indicators .badge {
+    margin-right: 20px;
+}
+.indicators-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+}
+#indicators footer {
+    position: absolute;
+    padding-bottom: 15px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.indicators-container section {
+    float: left;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+.indicators-container li {
+    display: inline-block;
+}
