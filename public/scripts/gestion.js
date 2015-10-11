@@ -1,40 +1,38 @@
 Parse.initialize("O8dECYavaIBZwi34qBZnIkvwAQEWVXjAiHwOGbKb", "2Vmb5IdO9TgrBA4FVh2eovsNmPy2JpqW72H8Rlzi");
-
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+    
 $(document).ready(function () {
     
     //bouton ajouter
     var $bAjouter = $("#ajouter");
     var $fadresses = $("#adresses");
-    
+    var $Inscriptions = $("#inscriptions"); 
+    //base de données
+    var Participant = Parse.Object.extend("Participant");
+    var Group = Parse.Object.extend("Group");
     
     
     //ajout des nouveaux champs
     $bAjouter.click(function(){
-        $fadresses.append(
-        "<label for='mail'>Adresse mail</label>"+
-          "<input type='email' class='form-control' placeholder='Email'>"
-        );
+        var unParticipant = new Participant();
+        
+        unParticipant.set('group', new Group({id :getParameterByName("groupId")}));
+        unParticipant.set('mail', $('#mail').val());
+        unParticipant.save(null, {
+            success: function () {
+               console.log("C'est sauvegardé avec succès !");
+          }
+        });
+        
+        $Inscriptions.append("<p><strong>"+$('#mail').val()+"</strong></p>");
     });
     
-    $indicatorsForm.submit(function (e) {
-        e.preventDefault();
 
-        var mails = $.map($("input"), function (select) {
-            var id = select.name.substr(4);
-            var note = select.value;
-            return {
-                indicateur: new Indicateur({id: id}),
-                note: note
-            };
-        });
-        var noteSaisies = new NoteSaisie();
-        noteSaisies.set('notes', notes);
-        noteSaisies.save(null, {
-            success: function () {
-                console.log("C'est sauvegardé avec succès !");
-            }
-        });
-    });
     
    
 
