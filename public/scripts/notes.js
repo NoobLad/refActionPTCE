@@ -1,9 +1,15 @@
 Parse.initialize("O8dECYavaIBZwi34qBZnIkvwAQEWVXjAiHwOGbKb", "2Vmb5IdO9TgrBA4FVh2eovsNmPy2JpqW72H8Rlzi");
-
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
 
 $(document).ready(function () {
     var Indicateur = Parse.Object.extend("Indicateur");
     var NoteSaisie = Parse.Object.extend("NoteSaisie");
+    var Group = Parse.Object.extend("Group");
 
     var links = "<ul>";
 
@@ -114,6 +120,8 @@ $(document).ready(function () {
         });
         var noteSaisies = new NoteSaisie();
         noteSaisies.set('notes', notesList);
+        var groupId = getParameterByName('groupId');
+        noteSaisies.set('group', new Group({ id: groupId}));
         noteSaisies.save(null, {
             success: function () {
                 console.log("C'est sauvegardé avec succès !");
