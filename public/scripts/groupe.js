@@ -6,6 +6,7 @@ $(document).ready(function () {
     var Group = Parse.Object.extend("Group");
 
     var emailMatcher = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+    var groupId = undefined;
 
     $groupesForm.submit(function (e) {
         e.preventDefault();
@@ -30,18 +31,22 @@ $(document).ready(function () {
         groupeSaisies.set('description', $('#description').val());
         groupeSaisies.set('mail', $('#mail').val());
         groupeSaisies.save(null, {
-            success: function () {
+            success: function (data) {
                 $("#wait").hide();
                 $(".alert-success").show();
+                console.log("data", arguments);
+                groupId = data.id;
             },
             error: function() {
                 $("#wait").hide();
                 $(".alert-warning").show();
             }
         });
-    });    
+    });
 
-
+    $("#goToGestion").click(function() {
+        document.location.href = "./gestion.html?groupId=" + groupId;
+    });
 
 });
 

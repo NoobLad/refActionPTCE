@@ -33,6 +33,11 @@ and open the template in the editor.
     <div class="alert alert-success" style="display: none;">
         Votre groupe a été créé avec succès !
         <br> Vous allez recevoir un mail contenant les informations de gestions (pensez à vérifier dans vos spams)
+
+        <div style="padding-top: 32px;">
+            <button id="goToGestion">Continuer</button>
+
+        </div>
     </div>
 
     <div class="alert alert-warning" style="display: none;">
@@ -46,9 +51,9 @@ and open the template in the editor.
     <form id="groupes">
         <div class="form-group" >
           <label for="mail">Adresse mail</label>
-          <input type="email" class="form-control" id="mail" placeholder="Email">
+          <input type="email" class="form-control" id="mail" placeholder="Votre email">
           <label for="nomGroupe">Nom du groupe</label>
-          <input type="text" class="form-control" placeholder="Text input" id="nomGroupe">
+          <input type="text" class="form-control" placeholder="Le nom de votre groupe" id="nomGroupe">
           <label for="Description">Description</label>
           <textarea class="form-control" rows="3" id="description"></textarea>
         </div>
