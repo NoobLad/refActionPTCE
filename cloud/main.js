@@ -13,9 +13,26 @@ Parse.Cloud.afterSave("Group", function (request) {
     Mailgun.sendEmail({
         to: group.get('mail'),
         from: "no-reply@cresol.fr",
-        subject: "Accès au groupe créé",
-        text: "Voici les accés."+
+        subject: "Accès au groupe créé, pour le référentiel d'action PTCE",
+        text: "Voici les accés : "+
                 "http://dev-cresol-ref.parseapp.com/gestion.html?groupId="+ group.id
+    }, {
+        success: function (httpResponse) {
+            console.log(httpResponse);
+        },
+        error: function (httpResponse) {
+            console.error(httpResponse);
+        }
+    });
+});
+Parse.Cloud.afterSave("Particpant", function (request) {
+    var participant = request.object;
+    Mailgun.sendEmail({
+        to: participant.get('mail'),
+        from: "no-reply@cresol.fr",
+        subject: "Accès au questionnaire du référentiel d'action PTCE",
+        text: "Voici les accés : "+
+                "http://dev-cresol-ref.parseapp.com/notes.html?groupId="+ participant.group.id
     }, {
         success: function (httpResponse) {
             console.log(httpResponse);
